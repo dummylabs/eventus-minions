@@ -1,5 +1,6 @@
 id: web-page-visit-aggregator
 name: Web Page Visit Aggregator
+description: Combines multiple web.page.visit events into one, deletes old events.
 triggers:
   - event_type: "web.page.visit"
     priority: 10
