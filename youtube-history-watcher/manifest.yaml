@@ -1,0 +1,18 @@
+id: youtube-history-watcher
+name: YouTube History Watcher
+description: Fetches recent YouTube watch history via yt-dlp and emits events to Eventus
+cron: "55 * * * *"
+timeout_seconds: 180
+max_parallel_runs: 1
+retention_days: 30
+tags:
+  - youtube
+  - history
+config:
+  cookies_file: /app/data/youtube_history_cookies.txt
+  state_file: /app/data/youtube_history_seen_ids.json
+  fetch_limit: 50
+  stop_after_consecutive_dupes: 3
+  eventus_channel: youtube.history
+  eventus_initiator_id: human.dima
+  eventus_ttl: "7d"

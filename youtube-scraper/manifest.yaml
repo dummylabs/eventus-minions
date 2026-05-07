@@ -1,0 +1,17 @@
+id: youtube-scraper
+name: YouTube Scraper
+description: Extract YouTube video metadata, subtitles, and ranked useful comments
+timeout_seconds: 300
+max_parallel_runs: 1
+retention_days: 30
+tags:
+  - youtube
+  - scraper
+config:
+  output_top_n: 10
+  candidate_top_level_limit: 30
+  max_scan: 150
+  reply_patience: 50
+  excluded_categories:
+    - Entertainment
+    - News & Politics
