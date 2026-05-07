@@ -1,3 +1,4 @@
 id: youtube-watch-scraper-poller
-name: Poll and delegate YouTube watch scraping
+name: Youtube links catcher
+description: Poll and delegate YouTube watch scraping
 cron: "*/5 * * * *"
