@@ -1,3 +1,4 @@
 id: alive-logger
 name: Alive Logger
+description: Useless test minion sending "I'am alive" to the log every munute.
 cron: "* * * * *"
