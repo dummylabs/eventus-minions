@@ -1,0 +1,5 @@
+id: web-page-visit-aggregator
+name: Web Page Visit Aggregator
+priority: 10
+trigger:
+  event_type: "web.page.visit"
