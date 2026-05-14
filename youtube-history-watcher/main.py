@@ -76,7 +76,7 @@ def run(ctx):
     eventus_initiator_id: str = config["eventus_initiator_id"]
     eventus_ttl: str = config["eventus_ttl"]
 
-    # Per Q6: cookies missing → run fails (raise, don't return _outcome.status=error)
+    # Cookies missing → run fails (raise; do not return a message with severity=error).
     if not Path(cookies_file).exists():
         raise FileNotFoundError(f"Cookies file not found: {cookies_file}")
 
@@ -86,7 +86,7 @@ def run(ctx):
     if videos is None:
         msg = "YouTube returned empty result — cookies may be expired"
         ctx.log.warning(msg)
-        return {"_outcome": {"code": "yt_dlp_empty", "status": "warning", "message": msg}}
+        return {"message": {"text": msg, "severity": "warning", "code": "yt_dlp_empty"}}
 
     seen_ids = load_seen_ids(state_file)
     ctx.log.info("Loaded %d known video IDs from state", len(seen_ids))
@@ -108,7 +108,9 @@ def run(ctx):
 
     if not new_videos:
         ctx.log.info("No new videos found")
-        return {"_outcome": {"code": "no_new_videos", "status": "success", "message": "No new videos"}}
+        return {
+            "message": {"text": "No new videos", "severity": "info", "code": "no_new_videos"},
+        }
 
     ctx.log.info("Sending %d new videos to Eventus...", len(new_videos))
     confirmed = 0
@@ -136,6 +138,6 @@ def run(ctx):
 
     message = f"Found {confirmed} new videos"
     return {
-        "_outcome": {"code": "new_videos_found", "status": "success", "message": message},
-        "new_videos": confirmed,
+        "message": {"text": message, "severity": "info", "code": "new_videos_found"},
+        "data": {"new_videos": confirmed},
     }

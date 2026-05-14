@@ -255,7 +255,7 @@ def run(ctx):
                 error=message,
                 details={"phase": "input"},
             )
-        return {"_outcome": {"code": "missing_url", "status": "error", "message": message}}
+        return {"message": {"text": message, "severity": "error", "code": "missing_url"}}
 
     url = url.strip()
     excluded_categories: list[str] = config.get("excluded_categories") or []
@@ -313,13 +313,12 @@ def run(ctx):
                     },
                 )
             return {
-                "_outcome": {
+                "message": {
+                    "text": comment,
+                    "severity": "info",
                     "code": "category_excluded",
-                    "status": "info",
-                    "message": comment,
                 },
-                "video_id": video_id,
-                "category": matched,
+                "data": {"video_id": video_id, "category": matched},
             }
     except Exception as exc:  # noqa: BLE001
         logger.warning(
@@ -355,7 +354,7 @@ def run(ctx):
                 error=message,
                 details={"phase": "input"},
             )
-        return {"_outcome": {"code": "invalid_input", "status": "error", "message": message}}
+        return {"message": {"text": message, "severity": "error", "code": "invalid_input"}}
     except Exception as exc:
         message = f"runtime: {exc}"
         logger.error(message)
@@ -438,14 +437,16 @@ def run(ctx):
         )
 
     return {
-        "_outcome": {
+        "message": {
+            "text": f"{video_id}: {len(result.comments)} comments",
+            "severity": "info",
             "code": "scraped",
-            "status": "success",
-            "message": f"{video_id}: {len(result.comments)} comments",
         },
-        "video_id": video_id,
-        "comments_count": len(result.comments),
-        "subtitles_chars": subtitles_chars,
-        "errors": result.errors,
-        "elapsed_seconds": elapsed,
+        "data": {
+            "video_id": video_id,
+            "comments_count": len(result.comments),
+            "subtitles_chars": subtitles_chars,
+            "errors": result.errors,
+            "elapsed_seconds": elapsed,
+        },
     }
