@@ -436,9 +436,10 @@ def run(ctx):
             else 0
         )
 
+    title_part = result.title or "(no title)"
     return {
         "message": {
-            "text": f"{video_id}: {len(result.comments)} comments",
+            "text": f"{title_part} [{video_id}] — {len(result.comments)} comments",
             "severity": "info",
             "code": "scraped",
         },
