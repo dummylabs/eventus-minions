@@ -135,6 +135,10 @@ def scrape_video(
                 "Request done metadata video_id=%s elapsed=%.2fs title_present=%s",
                 video_id, time.time() - step_t0, meta.get("title") is not None,
             )
+            logger.info(
+                "Metadata fetched video_id=%s title=%r channel=%r",
+                video_id, meta.get("title"), meta.get("channel"),
+            )
         except Exception as exc:  # noqa: BLE001
             logger.warning(
                 "Request failed metadata video_id=%s elapsed=%.2fs error=%s",
@@ -260,6 +264,12 @@ def run(ctx):
     prefetched_meta: dict[str, Any] | None = None
     try:
         prefetched_meta = fetch_metadata(url)
+        logger.info(
+            "Metadata fetched video_id=%s title=%r channel=%r",
+            extract_video_id(url),
+            prefetched_meta.get("title"),
+            prefetched_meta.get("channel"),
+        )
         video_categories: list[str] = prefetched_meta.get("categories") or []
         matched = _match_excluded_category(video_categories, excluded_categories)
         if matched:
