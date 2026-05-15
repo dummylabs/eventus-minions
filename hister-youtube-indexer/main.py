@@ -31,7 +31,10 @@ def _post(api_url: str, payload: dict, timeout: float) -> int:
     req = urllib.request.Request(
         api_url,
         data=body,
-        headers={"Content-Type": "application/json; charset=UTF-8"},
+        headers={
+            "Content-Type": "application/json; charset=UTF-8",
+            "Origin": "hister://",
+        },
         method="POST",
     )
     try:
