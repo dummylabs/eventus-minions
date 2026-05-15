@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from typing import Any
 
 from eventus_sdk import minion
 
 MINION_ID = "youtube-scraper"
 AGENT_NAME = "minion:youtube_watch_scraper_poller"
+MAX_SCRAPE_ATTEMPTS = 3
 
 
 def _extract_url(event) -> str | None:
@@ -20,6 +22,15 @@ def _extract_url(event) -> str | None:
     return None
 
 
+def _has_live_claim(event) -> bool:
+    until = event.claim_until
+    if until is None:
+        return False
+    if until.tzinfo is None:
+        until = until.replace(tzinfo=UTC)
+    return until > datetime.now(UTC)
+
+
 @minion
 def run(ctx):
     event = (
@@ -30,6 +41,30 @@ def run(ctx):
 
     if event is None:
         ctx.log.info("No pending YouTube watch events in the last 24 h")
+        return
+
+    if _has_live_claim(event):
+        ctx.log.info(
+            "Skipping %s — already claimed by %s until %s",
+            event.uid, event.claim_owner, event.claim_until,
+        )
+        return
+
+    if (event.claim_attempt or 0) >= MAX_SCRAPE_ATTEMPTS:
+        message = (
+            f"Exhausted scrape attempts after {event.claim_attempt} tries "
+            f"(limit {MAX_SCRAPE_ATTEMPTS})"
+        )
+        ctx.log.warning("%s — event=%s", message, event.uid)
+        ctx.fail_step(
+            event.uid,
+            agent=AGENT_NAME,
+            error=message,
+            new_state="failed",
+            comment="YouTube scrape attempts exhausted",
+            details={"claim_attempt": event.claim_attempt or 0},
+            release=False,
+        )
         return
 
     url = _extract_url(event)

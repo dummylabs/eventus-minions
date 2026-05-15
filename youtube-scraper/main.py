@@ -258,6 +258,21 @@ def run(ctx):
         return {"message": {"text": message, "severity": "error", "code": "missing_url"}}
 
     url = url.strip()
+
+    # Take a claim on the event so a kill-on-timeout leaves an expiring lease
+    # rather than a perpetually-claimable event. The lease is longer than the
+    # minion timeout so the poller's next tick sees an active claim and skips.
+    if event_uid:
+        try:
+            ctx.claim_event(
+                event_uid,
+                agent=AGENT,
+                stage="scrape",
+                lease_seconds=400,
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("claim_event failed for %s: %s", event_uid, exc)
+
     excluded_categories: list[str] = config.get("excluded_categories") or []
 
     # Pre-fetch metadata for early category check
