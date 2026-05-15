@@ -7,7 +7,7 @@ tags:
 
 triggers:
   - event_type: "^web\\.youtube\\.watch$"
-    event_state: "^new$"
+    event_state: "^actionable$"
     priority: 100
 
 timeout_seconds: 60
