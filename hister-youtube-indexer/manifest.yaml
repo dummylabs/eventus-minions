@@ -1,0 +1,20 @@
+id: hister-youtube-indexer
+name: Hister YouTube Indexer
+description: Index visited YouTube videos into local Hister
+tags:
+  - youtube
+  - hister
+
+triggers:
+  - event_type: "^web\\.youtube\\.watch$"
+    event_state: "^new$"
+    priority: 100
+
+timeout_seconds: 60
+failure_threshold: 10
+
+config:
+  hister_url: "http://192.168.1.75:4433"
+  request_timeout_seconds: 10
+  max_attempts: 3
+  backoff_seconds: [1, 3]
