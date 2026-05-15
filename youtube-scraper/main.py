@@ -273,7 +273,7 @@ def run(ctx):
         video_categories: list[str] = prefetched_meta.get("categories") or []
         matched = _match_excluded_category(video_categories, excluded_categories)
         if matched:
-            comment = f"not scrapped due to category: {matched}"
+            comment = f"YouTube scrape skipped: excluded category '{matched}'"
             logger.info(comment)
             video_id = extract_video_id(url)
 
@@ -301,15 +301,12 @@ def run(ctx):
                 ctx.complete_step(
                     event_uid,
                     agent=AGENT,
-                    new_state="actionable",
+                    new_state="skipped",
                     comment=comment,
                     details={
                         "video_id": video_id,
                         "category": matched,
-                        "comments_count": 0,
-                        "has_subtitles": False,
-                        "errors_count": 0,
-                        "errors": [],
+                        "phase": "excluded_category",
                     },
                 )
             return {
