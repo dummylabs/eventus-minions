@@ -1,7 +1,7 @@
 id: youtube-history-watcher
 name: YouTube History Watcher
 description: Fetches recent YouTube watch history via yt-dlp and emits events to Eventus
-cron: "55 * * * *"
+cron: "55 7-23 * * *"
 timeout_seconds: 180
 max_parallel_runs: 1
 retention_days: 30
